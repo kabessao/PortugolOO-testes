@@ -10,6 +10,7 @@ import java.util.List;
 import javabeans.Arquivo;
 import portugoloo.interpretador.interprete;
 import portugoloo.input.ScanFiles;
+import portugoloo.interpretador.Compiler;
 
 
 /**
@@ -22,22 +23,23 @@ public class PortugolooTeste {
      * @param args the command line arguments
      */
 
-    public static int main(String[] args) {
+    public static void main(String[] args) {
+	  testTranslate(); 
+    }
+
+    public static void TestWriter(){
+
+    }
+
+    public static void testTranslate(){
 	    String[] text = {
-		      "||0| ||1| teste { \n"
+		      "||0| ||1| JavaCode { \n"
 		    , "||0| ||20| ||14| ||3|(||6|[] args) {\n"
 		    , "||5|(\"isso não é um token 1 2 3 4 5 6 7 8 9 10\");\n"
 		    , "}\n"
-		    , "||22|"
 		    , "}\n"
-		    , ""
 	    };
-	    
-	    testTranslate(text);
-	    return 0;
-    }
-    public static void testTranslate(String[] text){
-	    System.out.println(new interprete().gerarCodigo(Arrays.asList(text)));
+	    new interprete().Run(Arrays.asList(text));
     }
 
 
