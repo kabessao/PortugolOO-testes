@@ -7,10 +7,14 @@ package portugoloo.teste;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import javabeans.Arquivo;
-import portugoloo.interpretador.interprete;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javabeans.*;
+import portugoloo.interpretador.Interprete;
 import portugoloo.input.ScanFiles;
 import portugoloo.interpretador.Compiler;
+
 
 
 /**
@@ -23,23 +27,63 @@ public class PortugolooTeste {
      * @param args the command line arguments
      */
 
+
     public static void main(String[] args) {
-	  testTranslate(); 
+        try { 
+            testTranslate();
+        } catch (Exception ex) {
+            Logger.getLogger(PortugolooTeste.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public static void TestWriter(){
 
     }
 
-    public static void testTranslate(){
-	    String[] text = {
-		      "||0| ||1| JavaCode { \n"
-		    , "||0| ||20| ||14| ||3|(||6|[] args) {\n"
-		    , "||5|(\"isso não é um token 1 2 3 4 5 6 7 8 9 10\");\n"
-		    , "}\n"
-		    , "}\n"
-	    };
-	    new interprete().Run(Arrays.asList(text));
+    public static void testTranslate() throws Exception{
+			String path = "/home/kabessao/classes/";
+			
+			ScanFiles f = new ScanFiles();
+			f.setPath(path);
+			
+			try {
+					f.ScanClasses();
+			} catch (IOException ex) {
+					Logger.getLogger(PortugolooTeste.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			
+			List<Arquivo> arquivos = f.getListaArquivos();
+			
+			List<Token> t = new TokensGenBasico().getTokens();
+			
+			Interprete in = new Interprete(t);
+			
+			in.interpretar(arquivos);
+
+			arquivos = in.getListaJava();
+			
+			for (int i = 0; i < arquivos.size() ;i++) {
+					for (final String linha : arquivos.get(i).getConteudoArq()){
+							if (linha.contains("main")) {
+								arquivos.get(i).setMain(true);
+								break;
+							}
+
+					}
+			}
+			
+			Compiler c = new Compiler(arquivos, path);
+			
+			for (Arquivo arquivo : arquivos) {
+					for (String linha : arquivo.getConteudoArq()) {
+							if (linha.indexOf("main(String[] args)") > -1){
+									arquivo.setMain(true);
+							}
+					}
+			}
+			c.Compile();
+			
+
     }
 
 
