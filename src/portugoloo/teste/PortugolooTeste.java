@@ -6,12 +6,13 @@
 package portugoloo.teste;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javabeans.*;
 import portugoloo.interpretador.Interprete;
+import portugoloo.lexico.Converte;
 import portugoloo.input.ScanFiles;
 import portugoloo.interpretador.Compiler;
 
@@ -27,13 +28,32 @@ public class PortugolooTeste {
      * @param args the command line arguments
      */
 
+	static String onWork = "c:/users/user/Desktop/classes/";
+	static String onKate = "/home/kabessao/classes/";
+	static String onDrika = "/mnt/home/classes/";
 
-    public static void main(String[] args) {
-        try { 
-            testTranslate();
-        } catch (Exception ex) {
-            Logger.getLogger(PortugolooTeste.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public static void main(String[] args) throws IOException, Exception {
+		String path = onWork;
+		
+		ScanFiles scanner = new ScanFiles();
+		scanner.setPath(path);
+		scanner.ScanClasses();
+
+		List<Arquivo> arquivos = scanner.getListaArquivos();
+
+		List<Token> tokens = new TokensGenBasico().getTokens();
+
+		Converte conversor = new Converte(tokens);
+		conversor.converter(arquivos);
+
+
+		Interprete inter = new Interprete(tokens);
+		inter.interpretar(conversor.getListaInter());
+		
+		
+		Compiler comp = new Compiler(inter.getListaJava(), path);
+		comp.Compile();
+		
     }
 
     public static void TestWriter(){
@@ -41,7 +61,7 @@ public class PortugolooTeste {
     }
 
     public static void testTranslate() throws Exception{
-			String path = "/home/kabessao/classes/";
+			String path = onWork;
 			
 			ScanFiles f = new ScanFiles();
 			f.setPath(path);
